@@ -16,26 +16,50 @@ jobs:
   build-linux-ubuntu:
     runs-on: ubuntu-latest
     steps:
-    - name: install dependencies
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Install dependencies
       run: |
-          sudo apt-get update
-          pip install cython
-    - name: prepare environment
+        sudo apt-get update
+        sudo apt-get install -y \
+          build-essential \
+          pkg-config \
+          checkinstall \
+          git \
+          autoconf \
+          automake \
+          libtool-bin \
+          libplist-dev \
+          libusbmuxd-dev \
+          libimobiledevice-glue-dev \
+          libssl-dev \
+          libusb-1.0-0-dev
+        pip install cython
+
+    - name: Prepare environment
       run: |
-          echo "target_triplet=`gcc -dumpmachine`" >> $GITHUB_ENV
-    # ... (保留其他原有步骤)
-    
-    - name: prepare artifact
+        echo "target_triplet=$(gcc -dumpmachine)" >> $GITHUB_ENV
+
+    - name: Autogen
+      run: ./autogen.sh PKG_CONFIG_PATH=/usr/local/lib/pkgconfig LDFLAGS="-Wl,-rpath=/usr/local/lib" --enable-debug
+
+    - name: Make
+      run: make
+
+    - name: Prepare artifact
       run: |
-          mkdir -p dest
-          DESTDIR=`pwd`/dest make install
-          tar -C dest -cf libimobiledevice.tar usr
-    
-    - name: publish artifact
+        mkdir -p dest
+        DESTDIR=$(pwd)/dest make install
+        tar -C dest -czf libimobiledevice.tar.gz usr
+
+    - name: Publish artifact
       uses: actions/upload-artifact@v4
       with:
         name: libimobiledevice-latest_${{env.target_triplet}}
-        path: libimobiledevice.tar
+        path: libimobiledevice.tar.gz
 
     - name: Save target triplet
       run: echo "${{ env.target_triplet }}" > target_triplet.txt
