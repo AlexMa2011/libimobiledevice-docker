@@ -1,6 +1,6 @@
-ENV DEBIAN_FRONTEND=noninteractive
-
 FROM ubuntu:latest
+
+ENV DEBIAN_FRONTEND=noninteractive
 
 # 安装必要的依赖
 RUN apt-get update && apt-get install -y \
