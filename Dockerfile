@@ -15,8 +15,10 @@ RUN apt-get update && apt-get install -y \
     libplist-dev \
     python3-dev \
     python3-pip \
-    usbmuxd \
-    python3-cython
+    usbmuxd
+
+# 使用 pip 安装 Cython
+RUN pip3 install --no-cache-dir cython
 
 # 克隆并编译 libplist
 RUN git clone https://github.com/libimobiledevice/libplist.git && \
