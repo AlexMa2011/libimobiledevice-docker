@@ -15,9 +15,12 @@ RUN apt-get update && apt-get install -y \
     libplist-dev \
     python3-dev \
     python3-pip \
+    python3-venv \
     usbmuxd
 
-# 使用 pip 安装 Cython
+# 创建并激活虚拟环境，然后安装 Cython
+RUN python3 -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
 RUN pip3 install --no-cache-dir cython
 
 # 克隆并编译 libplist
