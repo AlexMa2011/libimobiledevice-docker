@@ -1,3 +1,5 @@
+ENV DEBIAN_FRONTEND=noninteractive
+
 FROM ubuntu:latest
 
 # 安装必要的依赖
@@ -13,10 +15,8 @@ RUN apt-get update && apt-get install -y \
     libplist-dev \
     python3-dev \
     python3-pip \
-    usbmuxd
-
-# 安装 Cython
-RUN pip3 install cython
+    usbmuxd \
+    python3-cython
 
 # 克隆并编译 libplist
 RUN git clone https://github.com/libimobiledevice/libplist.git && \
